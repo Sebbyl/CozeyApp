@@ -1,4 +1,4 @@
-import { Box, styled, Typography } from "@mui/material";
+import { Box, styled } from "@mui/material";
 import React, { useRef, useState, useMemo, useEffect } from "react";
 import { ReactComponent as PauseSVG } from "./videos/pause.svg";
 import { ReactComponent as PlaySVG } from "./videos/play.svg";
@@ -11,106 +11,96 @@ interface SlideProp {
 }
 
 const CustomSlide: React.FC<SlideProp> = ({ videoSrc, isFocus }) => {
-  const [paused, setPaused] = useState(false);
+  // console.log(isFocus);
+  const [paused, setPaused] = useState(isFocus ? false : true);
   const [muted, setMuted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const VideoBox = styled(Box)({
     width: "18.75rem",
     height: "33.25rem",
     borderRadius: "1rem",
-    backgroundColor: "lightblue",
-    border: isFocus ? `solid blue` : 0,
+    backgroundColor: "#ECEBE7",
+    border: isFocus ? `solid #69A2FF` : 0,
+    padding: "0.2rem",
   });
 
-  // console.log(videoRef);
-
+  //Toggles the video mute
   const toggleMute = (): void => {
-    setMuted((muted) => !muted);
+    if (videoRef.current) {
+      videoRef.current.muted = !muted;
+      setMuted((muted) => !muted);
+    }
   };
 
-  // useEffect(() => {
-  //   if (isFocus && videoRef.current) {
-  //     console.log("test");
-  //     videoRef.current.play();
-  //     setPaused(false);
-  //   } else if (videoRef.current) {
-  //     console.log("test2");
-  //     videoRef.current.pause();
-  //     setPaused(true);
-  //   }
-  // }, [isFocus]);
+  //Autoplay on focus
+  useEffect(() => {
+    if (isFocus && videoRef.current) {
+      videoRef.current.play();
+      setPaused(false);
+    } else if (videoRef.current) {
+      console.log(videoRef.current);
+      videoRef.current.pause();
+      setPaused(true);
+    }
+  }, [isFocus]);
 
-  // const togglePause = (): void => {
-  //   setPaused((paused) => !paused);
-  //   if (videoRef.current) {
-  //     if (paused) {
-  //       console.log("play");
-  //       videoRef.current.play();
-  //     } else {
-  //       console.log("pause");
-  //       videoRef.current.pause();
-  //     }
-  //     setPaused(!paused);
-  //   }
-  // };
+  //Toggles the pause on button click
+  const togglePause = (): void => {
+    videoRef.current?.pause();
+    if (videoRef.current && !paused) {
+      setPaused(true);
+      videoRef.current.pause();
+    } else if (videoRef.current && paused) {
+      setPaused(false);
+      videoRef.current.play();
+    }
+  };
 
+  //Memoizes the videos, so they dont flicker on rerender
   const memoizedVideo = useMemo(() => {
     return (
-      <VideoBox position={"relative"}>
+      <VideoBox>
         <video
           ref={videoRef}
           width="100%"
           height={"100%"}
           style={{ borderRadius: "1rem" }}
-          muted
-          controls={isFocus}
-          autoPlay={isFocus}
         >
           <source src={videoSrc} type="video/mp4"></source>
         </video>
-        {/* <Box
-          sx={{
-            width: "15px",
-            height: "15px",
-            position: "absolute",
-            bottom: "40px",
-            right: "25px",
-          }}
-        >
-          <button
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-            }}
-            onClick={toggleMute}
-          >
-            {muted ? <SoundOffSVG /> : <SoundOnSVG />}
-          </button>
-          <button
-            style={{ background: "none", border: "none", cursor: "pointer" }}
-            // onClick={togglePause}
-          >
-            {paused ? <PlaySVG /> : <PauseSVG />}
-          </button>
-        </Box> */}
       </VideoBox>
     );
-  }, [videoSrc, isFocus]);
+  }, [isFocus]);
 
   return (
-    <Box>
+    <Box position={"relative"} sx={{ width: "19rem", height: "35rem" }}>
       {memoizedVideo}
-      <Typography
+      <Box
         sx={{
-          color: "#4F6076",
-          fontSize: "0.875rem",
-          weight: 400,
-          marginLeft: "0.5rem",
+          width: "15px",
+          height: "15px",
+          position: "absolute",
+          bottom: "60px",
+          right: "20px",
         }}
       >
-        Lorum Ipsum
-      </Typography>
+        <button
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+          }}
+          onClick={toggleMute}
+        >
+          {muted ? <SoundOffSVG /> : <SoundOnSVG />}
+        </button>
+        <button
+          style={{ background: "none", border: "none", cursor: "pointer" }}
+          onClick={togglePause}
+        >
+          {paused ? <PlaySVG /> : <PauseSVG />}
+        </button>
+      </Box>
     </Box>
   );
 };

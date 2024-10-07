@@ -13,6 +13,7 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
+//breakpoints for different screen sizes
 const theme = createTheme({
   breakpoints: {
     values: {

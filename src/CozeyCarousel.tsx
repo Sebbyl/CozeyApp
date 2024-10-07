@@ -28,20 +28,18 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 const ChevronButton = styled(Button)({
   position: "relative",
-  width: "3rem",
-  height: "3rem",
+  width: "1.5rem",
+  height: "3.5rem",
   borderRadius: "50%",
   backgroundColor: "#F7F8F6",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  boxSizing: "border-box",
 });
 
 export default function CozeyCarousel() {
   const [focusedIndex, setFocusedIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const [muted, setMuted] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
@@ -96,11 +94,7 @@ export default function CozeyCarousel() {
     previous: () => void;
   }
 
-  interface IndexProp {
-    index: number;
-    videoSrc: string;
-  }
-
+  //Custom next/previous buttons for the library used
   const CustomButtonGroup: React.FC<CustomButtonGroupProps> = ({
     next,
     previous,
@@ -117,90 +111,6 @@ export default function CozeyCarousel() {
     );
   };
 
-  const toggleMute = (): void => {
-    setMuted((muted) => !muted);
-  };
-
-  // console.log(paused);
-
-  const togglePause = (): void => {
-    setPaused((paused) => !paused);
-    if (videoRef.current) {
-      if (paused) {
-        console.log("pause");
-        videoRef.current.pause();
-      } else {
-        console.log("play");
-        videoRef.current.play();
-      }
-    }
-  };
-
-  const handlePlayPause = () => {};
-
-  // const VideoBoxFull: React.FC<IndexProp> = ({ videoSrc, index }) => {
-  //   const VideoBox = styled(Box)({
-  //     width: "18.75rem",
-  //     height: "33.25rem",
-  //     borderRadius: "1rem",
-  //     backgroundColor: "lightblue",
-  //     border: index === focusedIndex ? `solid blue` : 0,
-  //   });
-
-  //   if (index === 0) {
-  //   }
-  //   return (
-  //     <Box>
-  //       <VideoBox position={"relative"}>
-  //         <video width="300px" style={{ borderRadius: "1rem" }} ref={videoRef}>
-  //           <source src={videoSrc} type="video/mp4"></source>
-  //         </video>
-  //         <Box
-  //           sx={{
-  //             width: "15px",
-  //             height: "15px",
-  //             position: "absolute",
-  //             bottom: "40px",
-  //             right: "25px",
-  //           }}
-  //         >
-  //           <button
-  //             style={{
-  //               background: "none",
-  //               border: "none",
-  //               cursor: "pointer",
-  //             }}
-  //             onClick={toggleMute}
-  //           >
-  //             {muted ? <SoundOffSVG /> : <SoundOnSVG />}
-  //           </button>
-  //           <button
-  //             style={{ background: "none", border: "none", cursor: "pointer" }}
-  //             onClick={togglePause}
-  //           >
-  //             {paused ? <PlaySVG /> : <PauseSVG />}
-  //           </button>
-  //         </Box>
-  //       </VideoBox>
-
-  //       {/* <Box sx={{ position: "relative" }}> */}
-
-  //       {/* <VideoBox /> */}
-
-  //       <Typography
-  //         sx={{
-  //           color: "#4F6076",
-  //           fontSize: "0.875rem",
-  //           weight: 400,
-  //           marginLeft: "0.5rem",
-  //         }}
-  //       >
-  //         Lorum Ipsum
-  //       </Typography>
-  //     </Box>
-  //   );
-  // };
-
   const sliderRef = useRef<Slider>(null);
 
   const next = () => {
@@ -215,6 +125,7 @@ export default function CozeyCarousel() {
     }
   };
 
+  //Carousel settings
   const settings = {
     dots: false,
     infinite: true,
@@ -222,35 +133,33 @@ export default function CozeyCarousel() {
     slidesToShow: 5,
     slidesToScroll: 1,
     arrows: false,
-    // centerMode: true,
-    // centerPadding: "30px",
     focusOnSelect: true,
     afterChange: (current: number) => setFocusedIndex(current),
     useTransform: false,
     responsive: [
       {
-        breakpoint: 1700, // Screen width <= 1024px
+        breakpoint: 1700,
         settings: {
           slidesToShow: 4,
           slidesToScroll: 1,
         },
       },
       {
-        breakpoint: 1400, // Screen width <= 1024px
+        breakpoint: 1400,
         settings: {
           slidesToShow: 3,
           slidesToScroll: 1,
         },
       },
       {
-        breakpoint: 1100, // Screen width <= 1024px
+        breakpoint: 1100,
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
         },
       },
       {
-        breakpoint: 800, // Screen width <= 600px
+        breakpoint: 800,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
