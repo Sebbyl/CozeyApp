@@ -199,7 +199,11 @@ export default function CozeyCarousel() {
       <Box sx={{ height: "100%" }}>
         <Slider ref={sliderRef} {...settings}>
           {videos.map((video, index) => (
-            <CustomSlide videoSrc={video} isFocus={index === focusedIndex} />
+            <CustomSlide
+              key={`slide${index}`}
+              videoSrc={video}
+              isFocus={index === focusedIndex}
+            />
           ))}
         </Slider>
       </Box>

@@ -11,7 +11,6 @@ interface SlideProp {
 }
 
 const CustomSlide: React.FC<SlideProp> = ({ videoSrc, isFocus }) => {
-  // console.log(isFocus);
   const [paused, setPaused] = useState(isFocus ? false : true);
   const [muted, setMuted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -24,7 +23,7 @@ const CustomSlide: React.FC<SlideProp> = ({ videoSrc, isFocus }) => {
     padding: "0.2rem",
   });
 
-  //Toggles the video mute
+  //Toggles the mute button and functionality
   const toggleMute = (): void => {
     if (videoRef.current) {
       videoRef.current.muted = !muted;
@@ -32,21 +31,23 @@ const CustomSlide: React.FC<SlideProp> = ({ videoSrc, isFocus }) => {
     }
   };
 
-  //Autoplay on focus
+  //starts video on focus
   useEffect(() => {
     if (isFocus && videoRef.current) {
-      videoRef.current.play();
+      const playPromise = videoRef.current.play();
+      //Video occasinally tries to play before content is loaded. This just prevents the error. It will rerun and work as expected.
+      if (playPromise !== undefined) {
+        playPromise.then((_) => {}).catch((error) => {});
+      }
       setPaused(false);
     } else if (videoRef.current) {
-      console.log(videoRef.current);
       videoRef.current.pause();
       setPaused(true);
     }
   }, [isFocus]);
 
-  //Toggles the pause on button click
+  //Toggles the pause
   const togglePause = (): void => {
-    videoRef.current?.pause();
     if (videoRef.current && !paused) {
       setPaused(true);
       videoRef.current.pause();
@@ -56,7 +57,7 @@ const CustomSlide: React.FC<SlideProp> = ({ videoSrc, isFocus }) => {
     }
   };
 
-  //Memoizes the videos, so they dont flicker on rerender
+  //Memoizes the videos to prevent mass flickering
   const memoizedVideo = useMemo(() => {
     return (
       <VideoBox>
@@ -65,6 +66,7 @@ const CustomSlide: React.FC<SlideProp> = ({ videoSrc, isFocus }) => {
           width="100%"
           height={"100%"}
           style={{ borderRadius: "1rem" }}
+          muted
         >
           <source src={videoSrc} type="video/mp4"></source>
         </video>
